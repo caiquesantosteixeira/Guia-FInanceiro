@@ -16,5 +16,7 @@ namespace Guia_FInanceiro
         public decimal? PercentualSeguranca { get; set; }
 
         public string? Tipo { get; set; }
+
+        public decimal? MediaP { get; set; }
     }
 }

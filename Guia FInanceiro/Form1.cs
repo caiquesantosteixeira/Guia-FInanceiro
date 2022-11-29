@@ -9,7 +9,7 @@ namespace Guia_FInanceiro
     {
         static readonly string[] Scopes = { SheetsService.Scope.Spreadsheets };
         static readonly string ApplicationName = "Current Legislators";
-        static readonly string SpreadsheetId = "1Ph4FvC3F7SaBdwlfNOHE1lgxTnsj62dRzdEHSfuQiYg";
+        static readonly string SpreadsheetId = "1C6-gPVvM5w9BAFC7vWzuEilIYH87W49hH9719B4JxBw";
         static readonly string sheet = "Planilha Neto";
         static SheetsService service;
         static List<string> _tipos;
@@ -20,7 +20,13 @@ namespace Guia_FInanceiro
             InicializarChamadaGoogle();
             InicializarListas();
             InicializarNuds();
-            AdicionarColunas();
+            AdicionarColunasFiltroGeral();
+
+            AdicionarColunasBest(dgvBancos);
+            AdicionarColunasBest(dgvEletricas);
+            AdicionarColunasBest(dgvSaneamento);
+            AdicionarColunasBest(dgvSeguro);
+            AdicionarColunasBest(dgvTelecom);
         }
 
         private static void InicializarChamadaGoogle()
@@ -52,8 +58,9 @@ namespace Guia_FInanceiro
             nudMargemSeg.Value = 0;
         }
 
-        private void AdicionarColunas()
+        private void AdicionarColunasFiltroGeral()
         {
+            dgvPrincipal.Columns.Add("", "linha");
             dgvPrincipal.Columns.Add("", "Cod");
             dgvPrincipal.Columns.Add("", "Nome da Empresa");
             dgvPrincipal.Columns.Add("", "Tipo");
@@ -61,7 +68,11 @@ namespace Guia_FInanceiro
             dgvPrincipal.Columns.Add("", "Preço");
             dgvPrincipal.Columns.Add("", "Preço Teto");
             dgvPrincipal.Columns.Add("", "% segurança");
+
+            dgvPrincipal.Columns.Add("", "med. p.");
         }
+
+
 
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -102,6 +113,7 @@ namespace Guia_FInanceiro
                     empresa.PrecoTeto = Convert.ToDecimal(row[15].ToString().Replace("R$", ""));
                     empresa.PercentualSeguranca = Convert.ToDecimal(row[16].ToString().Replace("R$", "").Replace("%", ""));
                     empresa.Tipo = row[3].ToString();
+                    empresa.MediaP = (empresa.Dy + (empresa.PercentualSeguranca * 1.3M)) / 2;
                     lista.Add(empresa);
                     
                 }
@@ -125,7 +137,7 @@ namespace Guia_FInanceiro
             
             empresas = empresas.Where(b => Convert.ToDecimal(b.Dy) >= nudYMin.Value).OrderByDescending(a => a.Dy).ToList();
         
-            empresas = empresas.Where(a => a.PercentualSeguranca > nudMargemSeg.Value).ToList().OrderByDescending(a => a.PercentualSeguranca).ToList();
+            empresas = empresas.Where(a => a.PercentualSeguranca > nudMargemSeg.Value).ToList().OrderByDescending(a => a.MediaP).ToList();
             
 
             return empresas;
@@ -146,13 +158,25 @@ namespace Guia_FInanceiro
 
             for (var x = 0; x< empresas.Count;x++)
             {
+                dgvPrincipal.Rows.Insert(x,x.ToString(), empresas[x].Cod, empresas[x].NomeEmpresa, empresas[x].Tipo, empresas[x].Dy, empresas[x].Preco, empresas[x].PrecoTeto, empresas[x].PercentualSeguranca, empresas[x].MediaP);
+            }
+        }
 
-                dgvPrincipal.Rows.Insert(x, empresas[x].Cod, empresas[x].NomeEmpresa, empresas[x].Tipo, empresas[x].Dy, empresas[x].Preco, empresas[x].PrecoTeto, empresas[x].PercentualSeguranca);
+        private void AtualizarGridResumo(DataGridView dgv, List<Empresa> empresas,string tipo)
+        {
+            empresas = empresas.Where(a => a.Tipo == tipo).ToList();
+            dgv.Rows.Clear();
+
+            for (var x = 0; x < empresas.Count; x++)
+            {
+                
+                dgv.Rows.Insert(x,  empresas[x].NomeEmpresa, empresas[x].Dy, empresas[x].Preco, empresas[x].PrecoTeto, empresas[x].PercentualSeguranca);
             }
         }
 
         private void btnAtualizar_Click(object sender, EventArgs e)
         {
+            InicializarChamadaGoogle();
             RunTasks();
         }
 
@@ -163,6 +187,30 @@ namespace Guia_FInanceiro
             var empresas = Filtrar(_empresas);
 
             AtualizarGrid(empresas);
+            PopularResumos();
+        }
+        private void AdicionarColunasBest(DataGridView dgv)
+        {
+            dgv.Columns.Add("", "Nome da Empresa");
+            dgv.Columns.Add("", "DY");
+            dgv.Columns.Add("", "Preço");
+            dgv.Columns.Add("", "Preço Teto");
+            dgv.Columns.Add("", "% segurança");
+            dgv.RowHeadersVisible = false;
+        }
+        private void PopularResumos()
+        {
+            var todasEmpresasOrdenadas = _empresas.Where(a => a.PercentualSeguranca>2).OrderByDescending(a => a.PercentualSeguranca).ToList();
+            AtualizarGridResumo(dgvBancos, todasEmpresasOrdenadas, "Bancos");
+            AtualizarGridResumo(dgvEletricas, todasEmpresasOrdenadas, "Energia");
+            AtualizarGridResumo(dgvSaneamento, todasEmpresasOrdenadas, "Saneamento");
+            AtualizarGridResumo(dgvSeguro, todasEmpresasOrdenadas, "Seguros");
+            AtualizarGridResumo(dgvTelecom, todasEmpresasOrdenadas, "Telecomunicações");
+        }
+
+        private void panel2_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 }
