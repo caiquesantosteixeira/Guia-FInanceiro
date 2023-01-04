@@ -48,6 +48,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.label7 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.button1 = new System.Windows.Forms.Button();
+            this.lblPrecoLote = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvPrincipal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudYMin)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nudMargemSeg)).BeginInit();
@@ -255,6 +257,8 @@
             // panel2
             // 
             this.panel2.BackColor = System.Drawing.SystemColors.ControlLight;
+            this.panel2.Controls.Add(this.lblPrecoLote);
+            this.panel2.Controls.Add(this.button1);
             this.panel2.Controls.Add(this.dgvPrincipal);
             this.panel2.Controls.Add(this.label3);
             this.panel2.Controls.Add(this.nudMargemSeg);
@@ -280,11 +284,30 @@
             this.panel2.Size = new System.Drawing.Size(1933, 803);
             this.panel2.TabIndex = 21;
             // 
+            // button1
+            // 
+            this.button1.Location = new System.Drawing.Point(797, 18);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(176, 35);
+            this.button1.TabIndex = 19;
+            this.button1.Text = "Minhas empresas";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // lblPrecoLote
+            // 
+            this.lblPrecoLote.AutoSize = true;
+            this.lblPrecoLote.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
+            this.lblPrecoLote.Location = new System.Drawing.Point(1326, 165);
+            this.lblPrecoLote.Name = "lblPrecoLote";
+            this.lblPrecoLote.Size = new System.Drawing.Size(0, 25);
+            this.lblPrecoLote.TabIndex = 20;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1955, 834);
+            this.ClientSize = new System.Drawing.Size(1540, 834);
             this.Controls.Add(this.panel2);
             this.Name = "Form1";
             this.Text = "Form1";
@@ -328,5 +351,7 @@
         private Panel panel2;
         private Panel panel3;
         private Label label10;
+        private Button button1;
+        private Label lblPrecoLote;
     }
 }

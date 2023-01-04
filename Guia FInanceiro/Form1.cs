@@ -9,7 +9,7 @@ namespace Guia_FInanceiro
     {
         static readonly string[] Scopes = { SheetsService.Scope.Spreadsheets };
         static readonly string ApplicationName = "Current Legislators";
-        static readonly string SpreadsheetId = "1C6-gPVvM5w9BAFC7vWzuEilIYH87W49hH9719B4JxBw";
+        static readonly string SpreadsheetId = "13qdnpDNcstdMoy0fWkYZgMLYPvYnZwn1-Cd9T--lrwA";
         static readonly string sheet = "Planilha Neto";
         static SheetsService service;
         static List<string> _tipos;
@@ -176,6 +176,7 @@ namespace Guia_FInanceiro
 
         private void btnAtualizar_Click(object sender, EventArgs e)
         {
+            lblPrecoLote.Text = "";
             InicializarChamadaGoogle();
             RunTasks();
         }
@@ -211,6 +212,30 @@ namespace Guia_FInanceiro
         private void panel2_Paint(object sender, PaintEventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            InicializarChamadaGoogle();
+
+            var listaEmpresas = new List<string>();
+            listaEmpresas.Add("");
+
+            listaEmpresas.Add("bbas3".ToUpper());
+            listaEmpresas.Add("bbdc4".ToUpper());
+            listaEmpresas.Add("bbse3".ToUpper());
+            listaEmpresas.Add("cmig4".ToUpper());
+            listaEmpresas.Add("klbn4".ToUpper());
+            listaEmpresas.Add("neoe3".ToUpper());
+            listaEmpresas.Add("sapr4".ToUpper());
+            listaEmpresas.Add("taee4".ToUpper());
+            listaEmpresas.Add("vivt3".ToUpper());
+            listaEmpresas.Add("rani3".ToUpper());
+            var MinhaListaEmpresas = _empresas.Where(a => listaEmpresas.Contains(a.Cod)).ToList();
+            var precoLote = MinhaListaEmpresas.Sum(a => a.Preco);
+            lblPrecoLote.Text = precoLote.ToString();
+            AtualizarGrid(MinhaListaEmpresas);
+            PopularResumos();
         }
     }
 }
